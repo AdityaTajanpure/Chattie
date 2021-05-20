@@ -1,8 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FileUpload {
-  FirebaseStorage _storage = FirebaseStorage.instance;
-
   uploadPic(
     _image1,
     _userId,

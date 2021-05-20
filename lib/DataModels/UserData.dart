@@ -1,18 +1,48 @@
-class UserData {
-  String name, phoneNo;
-  String imageUrl;
-  String about;
-  String uid;
-  bool online;
-  List<String> chatsList;
+import 'package:flutter/foundation.dart';
 
-  UserData(this.name, this.phoneNo, this.imageUrl, this.about, this.uid,
-      this.online, this.chatsList);
-}
+class UserData extends ChangeNotifier {
+  String name = "";
+  String phoneNo = "";
+  String imageUrl = "";
+  String about = "";
+  String uid = "";
+  bool online = false;
+  List<String> chatsList = [];
 
-class ChatsList {
-  String chatId;
-  int pendingMsgs;
-  DateTime lastTime;
-  ChatsList(this.chatId, this.pendingMsgs, this.lastTime);
+  String get getName => this.name;
+  String get getPhoneNo => this.phoneNo;
+  String get getImageUrl => this.imageUrl;
+  String get getAbout => this.about;
+  String get getUid => this.uid;
+  bool get getOnline => this.online;
+  List<String> get getList => this.chatsList;
+
+  set setName(value) => {
+        this.name = value,
+        notifyListeners(),
+      };
+  set setPhoneNo(value) => {
+        this.phoneNo = value,
+        notifyListeners(),
+      };
+  set setImageUrl(value) => {
+        this.imageUrl = value,
+        notifyListeners(),
+      };
+  set setAbout(value) => {
+        this.about = value,
+        notifyListeners(),
+      };
+  set setUid(value) => {
+        this.uid = value,
+        notifyListeners(),
+      };
+  set setOnline(value) => {
+        this.online = value,
+        notifyListeners(),
+      };
+  set setList(value) => {
+        this.chatsList = value,
+        notifyListeners(),
+      };
 }

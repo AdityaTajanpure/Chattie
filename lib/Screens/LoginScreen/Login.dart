@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../../DatabaseServices/FileUpload.dart';
 import '../../DataModels/UserData.dart';
 import '../../DatabaseServices/UserLogin.dart';
@@ -51,8 +52,7 @@ class _LoginState extends State<Login> {
             Navigator.of(context).pop();
             if (user != null) {
               String data = await FileUpload().uploadPic(_image, user.uid);
-              UserLogin(uid: user.uid).updateUserData(
-                  new UserData(name, phoneNo, data, "", user.uid, false, []));
+              UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
               Navigator.push(
                   context, AppIntents.createRoute(widget: HomeScreen()));
             }
@@ -129,8 +129,7 @@ class _LoginState extends State<Login> {
       final User user = result.user;
       if (user != null) {
         String data = await FileUpload().uploadPic(_image, user.uid);
-        UserLogin(uid: user.uid).updateUserData(
-            new UserData(name, phoneNo, data, "", user.uid, false, []));
+        UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
         Navigator.push(context, AppIntents.createRoute(widget: HomeScreen()));
       }
     } catch (e) {
@@ -139,7 +138,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  handleError(FirebaseAuthException error) {
+  handleError(error) {
     Navigator.pop(context);
     Fluttertoast.showToast(
         msg: 'Error:  ${error.code} ',

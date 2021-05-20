@@ -34,7 +34,18 @@ Chat
     - grp_bio
 
 
+No User data
+    - Show login page
+    - User Logs In
+    - Creates new User
+    - Set Zero chats
+    - Save data in provider class
 
+Has User data
+    - Show Login Screen
+    - User Logs In
+    - if values.exists() then load data and save user class
+    - Save data in provider class
 
 
 

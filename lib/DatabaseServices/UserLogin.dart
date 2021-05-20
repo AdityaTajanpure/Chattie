@@ -8,16 +8,23 @@ class UserLogin {
   final CollectionReference userReference =
       FirebaseFirestore.instance.collection('users');
 
-  Future updateUserData(UserData data) async {
+  Future updateUserData(String name, String phoneNo, String imageUrl) async {
     await userReference.doc(uid).get().then((value) async {
       if (!value.exists) {
         return await userReference.doc(uid).set({
-          'name': data.name,
-          'phoneNo': data.phoneNo,
-          'imageUrl': data.imageUrl,
-          'uid': data.uid,
-          'online': data.online,
-          'chats_list': data.chatsList
+          'name': name,
+          'phoneNo': phoneNo,
+          'imageUrl': imageUrl,
+          'uid': this.uid,
+          'online': true,
+          'chats_list': []
+        });
+      } else {
+        return await userReference.doc(uid).update({
+          'name': name,
+          'phoneNo': phoneNo,
+          'imageUrl': imageUrl,
+          'online': true,
         });
       }
     });
