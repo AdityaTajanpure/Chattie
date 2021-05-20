@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chattie/Services/Intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,9 @@ import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../DatabaseServices/FileUpload.dart';
+import '../../DataModels/UserData.dart';
+import '../../DatabaseServices/UserLogin.dart';
+import '../HomeScreen/HomeScreen.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -46,9 +50,11 @@ class _LoginState extends State<Login> {
             User user = result.user;
             Navigator.of(context).pop();
             if (user != null) {
-              print(user);
-              String data = FileUpload().uploadPic(_image, user.uid);
-              print(data);
+              String data = await FileUpload().uploadPic(_image, user.uid);
+              UserLogin(uid: user.uid).updateUserData(
+                  new UserData(name, phoneNo, data, "", user.uid, false, []));
+              Navigator.push(
+                  context, AppIntents.createRoute(widget: HomeScreen()));
             }
           },
           verificationFailed: (FirebaseAuthException exception) {
@@ -99,8 +105,15 @@ class _LoginState extends State<Login> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return new AlertDialog(
-            title: Text('Loading'),
-          );
+              title: Text('Loading'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ],
+              ));
         });
   }
 
@@ -115,10 +128,10 @@ class _LoginState extends State<Login> {
           await _auth.signInWithCredential(credential);
       final User user = result.user;
       if (user != null) {
-        print(user);
-        Navigator.pop(context);
-        var data = await FileUpload().uploadPic(_image, user.uid);
-        print(data);
+        String data = await FileUpload().uploadPic(_image, user.uid);
+        UserLogin(uid: user.uid).updateUserData(
+            new UserData(name, phoneNo, data, "", user.uid, false, []));
+        Navigator.push(context, AppIntents.createRoute(widget: HomeScreen()));
       }
     } catch (e) {
       Navigator.of(context).pop();
