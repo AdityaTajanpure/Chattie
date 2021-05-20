@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chattie/AuthServices/AuthenticationService.dart';
 import 'package:chattie/Services/Intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,11 @@ class _LoginState extends State<Login> {
   File _image;
   final picker = ImagePicker();
 
-  Future<void> verifyPhone() async {
+  Future<void> verifyPhone(UserData userData) async {
     print("+" + _selected.dialingCode + phoneNo);
     final PhoneCodeSent smsOTPSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
-      smsOTPDialog(context).then((value) {
+      smsOTPDialog(context, userData).then((value) {
         print('signing in');
       });
     };
@@ -53,6 +54,8 @@ class _LoginState extends State<Login> {
             if (user != null) {
               String data = await FileUpload().uploadPic(_image, user.uid);
               UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
+              UserLogin(uid: user.uid).getUserData(userData);
+
               Navigator.push(
                   context, AppIntents.createRoute(widget: HomeScreen()));
             }
@@ -66,7 +69,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<bool> smsOTPDialog(BuildContext context) {
+  Future<bool> smsOTPDialog(BuildContext context, UserData userData) {
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -91,7 +94,7 @@ class _LoginState extends State<Login> {
               TextButton(
                 child: Text('Done'),
                 onPressed: () {
-                  signIn();
+                  signIn(userData);
                 },
               )
             ],
@@ -117,7 +120,7 @@ class _LoginState extends State<Login> {
         });
   }
 
-  signIn() async {
+  signIn(UserData userData) async {
     loading(context);
     try {
       final AuthCredential credential = PhoneAuthProvider.credential(
@@ -130,6 +133,7 @@ class _LoginState extends State<Login> {
       if (user != null) {
         String data = await FileUpload().uploadPic(_image, user.uid);
         UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
+        UserLogin(uid: user.uid).getUserData(userData);
         Navigator.push(context, AppIntents.createRoute(widget: HomeScreen()));
       }
     } catch (e) {
@@ -163,6 +167,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final userData = context.read<UserData>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -349,7 +354,8 @@ class _LoginState extends State<Login> {
                           backgroundColor: Colors.grey,
                           textColor: Colors.black);
                     }
-                    if (this.name != '' || this.phoneNo != '') verifyPhone();
+                    if (this.name != '' || this.phoneNo != '')
+                      verifyPhone(userData);
                   },
                   child: Container(
                     decoration: BoxDecoration(

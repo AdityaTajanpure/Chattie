@@ -7,7 +7,7 @@ class UserData extends ChangeNotifier {
   String about = "";
   String uid = "";
   bool online = false;
-  List<String> chatsList = [];
+  List chatsList = [];
 
   String get getName => this.name;
   String get getPhoneNo => this.phoneNo;
@@ -15,7 +15,7 @@ class UserData extends ChangeNotifier {
   String get getAbout => this.about;
   String get getUid => this.uid;
   bool get getOnline => this.online;
-  List<String> get getList => this.chatsList;
+  List get getList => this.chatsList;
 
   set setName(value) => {
         this.name = value,
