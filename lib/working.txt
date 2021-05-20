@@ -1,0 +1,60 @@
+User Creates a Profile, Login is created,
+If login is already done, take to home page;
+
+Home page will show all chats, list of all chats
+will be a class containing all the chats lists for the User
+User from firestore to User class
+User().chats (map) => ChatsLList class from map to class
+
+On Click on any chat, select chat id and load that chat data from firestore to chat class
+Pass image url and name and userid via chat list
+
+User
+    - image
+    - name
+    - about
+    - online
+    - phoneNo
+    - userid
+    - ChatsList 
+        - chatid    
+        - pending_msgs
+        - last_time
+
+Chat
+    - messages {
+        time,
+        msg:userid,
+        seen,
+    }
+    - users [
+        userid
+    ]
+    - grp_photo
+    - grp_bio
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
