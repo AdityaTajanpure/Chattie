@@ -54,7 +54,6 @@ class _LoginState extends State<Login> {
             if (user != null) {
               String data = await FileUpload().uploadPic(_image, user.uid);
               UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
-              UserLogin(uid: user.uid).getUserData(userData);
 
               Navigator.push(
                   context, AppIntents.createRoute(widget: HomeScreen()));
@@ -133,7 +132,7 @@ class _LoginState extends State<Login> {
       if (user != null) {
         String data = await FileUpload().uploadPic(_image, user.uid);
         UserLogin(uid: user.uid).updateUserData(name, phoneNo, data);
-        UserLogin(uid: user.uid).getUserData(userData);
+
         Navigator.push(context, AppIntents.createRoute(widget: HomeScreen()));
       }
     } catch (e) {

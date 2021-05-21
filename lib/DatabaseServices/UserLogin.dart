@@ -44,7 +44,6 @@ class UserLogin {
       data.setOnline = value.data()['online'];
       data.setUid = value.data()['uid'];
       data.setList = value.data()['chats_list'];
-      print("UID:" + value.data()['name']);
     });
   }
 }
