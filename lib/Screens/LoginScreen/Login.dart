@@ -271,6 +271,7 @@ class _LoginState extends State<Login> {
                         .textTheme
                         .headline1
                         .copyWith(fontWeight: FontWeight.w500, fontSize: 18),
+                    maxLength: 20,
                     decoration: new InputDecoration(
                       labelText: "Enter your Name",
                       border: OutlineInputBorder(),
