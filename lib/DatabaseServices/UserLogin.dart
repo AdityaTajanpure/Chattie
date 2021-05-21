@@ -32,18 +32,18 @@ class UserLogin {
     });
   }
 
-  Future<void> getUserData(UserData data) async {
+  Future<void> getUserData(user) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .get()
         .then((value) {
-      data.setName = value.data()['name'];
-      data.setPhoneNo = value.data()['phoneNo'];
-      data.setImageUrl = value.data()['imageUrl'];
-      data.setOnline = value.data()['online'];
-      data.setUid = value.data()['uid'];
-      data.setList = value.data()['chats_list'];
+      user.setName = value.data()['name'];
+      user.setPhoneNo = value.data()['phoneNo'];
+      user.setImageUrl = value.data()['imageUrl'];
+      user.setOnline = value.data()['online'];
+      user.setUid = value.data()['uid'];
+      user.setList = value.data()['chats_list'];
     });
   }
 }
