@@ -1,3 +1,5 @@
+import 'package:chattie/Screens/ChatScreen/ChatScreen.dart';
+import 'package:chattie/Services/Intent.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -69,7 +71,6 @@ class FirstScreen extends StatelessWidget {
                 context: context,
                 removeTop: true,
                 child: ListView.separated(
-                  primary: false,
                   shrinkWrap: true,
                   itemCount: chatsList.length,
                   separatorBuilder: (context, index) => Divider(
@@ -91,7 +92,7 @@ class FirstScreen extends StatelessWidget {
                               fit: BoxFit.contain),
                         ),
                       ),
-                      trailing: Text("12:05",
+                      trailing: Text(chatsList[index]['time'],
                           style: TextStyle(
                               fontWeight: FontWeight.w300, fontSize: 16)),
                       title: Text(
@@ -99,8 +100,18 @@ class FirstScreen extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 18),
                       ),
-                      subtitle: Container(),
-                      onTap: () {},
+                      subtitle: Text(chatsList[index]['last_msg'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            AppIntents.createRoute(
+                                widget: ChatScreen(
+                              chatID: chatsList[index],
+                              index: index,
+                            )));
+                      },
                       contentPadding: EdgeInsets.only(right: 25),
                     );
                   },

@@ -21,117 +21,122 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    userData = context.read<UserData>();
     user = context.read<User>();
     super.initState();
-    getData();
-  }
-
-  getData() async {
-    userData = context.read<UserData>();
-    await UserLogin(uid: user.uid).getUserData(userData);
-    print(userData.getName);
-    print(userData.chatsList);
-    tabs = [
-      FirstScreen(chatsList: userData.getList),
-      SecondScreen(
-        chatRequests: userData.getRequest,
-      ),
-      ThirdScreen(),
-      FourthScreen()
-    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: FutureBuilder(
-            future: Future.delayed(Duration(seconds: 2), () => true),
-            builder: (context, snapshot) {
-              if (snapshot.hasData)
-                return Stack(
-                  children: [
-                    tabs[_selectedIndex],
-                    Positioned(
-                      left: 25,
-                      bottom: 20,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.7),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(2, 5), // changes position of shadow
-                              //first paramerter of offset is left-right
-                              //second parameter is top to down
+      backgroundColor: Colors.white,
+      body: FutureBuilder(
+        future: Future.delayed(Duration(seconds: 2), () => true),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          else
+            return StreamBuilder(
+                stream: UserLogin(uid: user.uid).getUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    userData.setAllData = snapshot.data.data();
+                    return Stack(
+                      children: [
+                        if (_selectedIndex == 0)
+                          FirstScreen(chatsList: userData.getList),
+                        if (_selectedIndex == 1)
+                          SecondScreen(chatRequests: userData.getRequest),
+                        if (_selectedIndex == 2) ThirdScreen(),
+                        if (_selectedIndex == 3) FourthScreen(),
+                        Positioned(
+                          left: 25,
+                          bottom: 20,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width - 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.7),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      2, 5), // changes position of shadow
+                                  //first paramerter of offset is left-right
+                                  //second parameter is top to down
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                                icon: Icon(
-                                  Icons.home,
-                                  color: _selectedIndex == 0
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedIndex = 0;
-                                  });
-                                }),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.notifications_outlined,
-                                  color: _selectedIndex == 1
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedIndex = 1;
-                                  });
-                                }),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: _selectedIndex == 2
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedIndex = 2;
-                                  });
-                                }),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.settings,
-                                  color: _selectedIndex == 3
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedIndex = 3;
-                                  });
-                                }),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              else
-                return Center(child: CircularProgressIndicator());
-            }));
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.home,
+                                      color: _selectedIndex == 0
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedIndex = 0;
+                                      });
+                                    }),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.notifications_outlined,
+                                      color: _selectedIndex == 1
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedIndex = 1;
+                                      });
+                                    }),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.people,
+                                      color: _selectedIndex == 2
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedIndex = 2;
+                                      });
+                                    }),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.settings,
+                                      color: _selectedIndex == 3
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedIndex = 3;
+                                      });
+                                    }),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                });
+        },
+      ),
+    );
   }
 }

@@ -51,4 +51,16 @@ class UserData extends ChangeNotifier {
         this.requests = value,
         notifyListeners(),
       };
+
+  set setAllData(value) => {
+        this.requests = value['request'],
+        this.chatsList = value['chats_list'],
+        this.online = value['online'],
+        this.uid = value['uid'],
+        this.about = value['about'],
+        this.imageUrl = value['imageUrl'],
+        this.phoneNo = value['phoneNo'],
+        this.name = value['name'],
+        notifyListeners(),
+      };
 }

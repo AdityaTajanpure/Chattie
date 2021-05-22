@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class FourthScreen extends StatelessWidget {
-  String username;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

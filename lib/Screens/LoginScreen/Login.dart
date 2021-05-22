@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:chattie/AuthServices/AuthenticationService.dart';
 import 'package:chattie/Services/Intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -282,7 +281,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 5,
                 ),
                 Row(
                   children: [

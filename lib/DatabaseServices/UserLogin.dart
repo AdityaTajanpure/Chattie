@@ -15,7 +15,9 @@ class UserLogin {
           'imageUrl': imageUrl,
           'uid': this.uid,
           'online': true,
-          'chats_list': []
+          'chats_list': [],
+          'request': [],
+          'about': ''
         });
       } else {
         return await userReference.doc(uid).update({
@@ -29,14 +31,48 @@ class UserLogin {
   }
 
   Future<void> getUserData(user) async {
-    await userReference.doc(uid).get().then((value) {
-      user.setName = value.data()['name'];
-      user.setPhoneNo = value.data()['phoneNo'];
-      user.setImageUrl = value.data()['imageUrl'];
-      user.setOnline = value.data()['online'];
-      user.setUid = value.data()['uid'];
-      user.setList = value.data()['chats_list'];
-      user.setRequest = value.data()['request'];
+    await userReference.doc(uid).get().then((value) {});
+  }
+
+  getUser() {
+    return userReference.doc(uid).snapshots();
+  }
+
+  acceptRequest(index, List request) {
+    Map<String, dynamic> data = request.removeAt(index);
+    return userReference.doc(uid).update({'request': request}).then((value) {
+      userReference.doc(uid).update({
+        'chats_list': FieldValue.arrayUnion([data])
+      });
+    });
+  }
+
+  sendRequest() {}
+
+  cancelRequest() {}
+
+  getChatData(chatId) {
+    return FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .snapshots();
+  }
+
+  sendMsg(chatID, data, time, id1, id2, chatList, index) {
+    return FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'chat': FieldValue.arrayUnion([
+        {
+          'msg': data,
+          'time': time,
+          'seen': false,
+        }
+      ])
+    }).then((value) {
+      chatList[index]['last_msg'] = data.split(":")[0];
+      chatList[index]['time'] = time;
+      userReference.doc(id2).update({
+        'chats_list': chatList,
+      });
     });
   }
 }
