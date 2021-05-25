@@ -5,6 +5,7 @@ import 'package:chattie/Screens/HomeScreen/Components/SecondScreen.dart';
 import 'package:chattie/Screens/HomeScreen/Components/ThirdScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'Components/FirstScreen.dart';
 
@@ -48,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (_selectedIndex == 0)
                           FirstScreen(chatsList: userData.getList),
                         if (_selectedIndex == 1)
-                          SecondScreen(chatRequests: userData.getRequest),
+                          SecondScreen(
+                            chatRequests: userData.getRequest,
+                            uid: user.uid,
+                          ),
                         if (_selectedIndex == 2) ThirdScreen(),
                         if (_selectedIndex == 3) FourthScreen(),
                         Positioned(

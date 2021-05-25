@@ -1,10 +1,51 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chattie/DatabaseServices/UserLogin.dart';
 import 'package:flutter/material.dart';
 
-class SecondScreen extends StatelessWidget {
-  final chatRequests;
+class SecondScreen extends StatefulWidget {
+  final chatRequests, uid;
 
-  const SecondScreen({Key key, this.chatRequests}) : super(key: key);
+  const SecondScreen({Key key, this.chatRequests, this.uid}) : super(key: key);
+
+  @override
+  _SecondScreenState createState() => _SecondScreenState();
+}
+
+class _SecondScreenState extends State<SecondScreen> {
+  String whatHappened = "";
+
+  Future<bool> _showConfirmationDialog(
+      BuildContext context, String action, index, request) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you want to $action this request?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                if (action == "Accept")
+                  await UserLogin(uid: widget.uid).acceptRequest(
+                      index, request, widget.chatRequests[index]['uid']);
+                else
+                  await UserLogin(uid: widget.uid)
+                      .cancelRequest(index, request);
+                Navigator.pop(context, true); // showDialog() returns true
+              },
+            ),
+            TextButton(
+              child: const Text('No'),
+              onPressed: () async {
+                Navigator.pop(context, false); // showDialog() returns false
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,58 +73,88 @@ class SecondScreen extends StatelessWidget {
                 child: ListView.separated(
                   primary: false,
                   shrinkWrap: true,
-                  itemCount: chatRequests.length,
+                  itemCount: widget.chatRequests.length,
                   separatorBuilder: (context, index) => Divider(
                     color: Colors.black,
                   ),
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                    return Dismissible(
+                      key: Key(widget.chatRequests[index]['name']),
+                      onDismissed: (direction) {
+                        setState(() {
+                          widget.chatRequests.removeAt(index);
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Request of ${widget.chatRequests[index]['name']} is $whatHappened")));
+                      },
+                      confirmDismiss:
+                          (DismissDirection dismissDirection) async {
+                        switch (dismissDirection) {
+                          case DismissDirection.startToEnd:
+                            whatHappened = 'ARCHIVED';
+                            return await _showConfirmationDialog(
+                                    context,
+                                    'Accept',
+                                    index,
+                                    widget.chatRequests[index]) ==
+                                true;
+                          case DismissDirection.endToStart:
+                            whatHappened = 'DELETED';
+                            return await _showConfirmationDialog(
+                                    context,
+                                    'Decline',
+                                    index,
+                                    widget.chatRequests[index]) ==
+                                true;
+                          case DismissDirection.horizontal:
+                          case DismissDirection.vertical:
+                          case DismissDirection.up:
+                          case DismissDirection.down:
+                            assert(false);
+                        }
+                        return false;
+                      },
+                      background: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        color: Colors.green,
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.check),
                       ),
-                      leading: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                  chatRequests[index]['image']),
-                              fit: BoxFit.contain),
+                      secondaryBackground: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        child: Icon(Icons.close),
+                      ),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      ),
-                      subtitle: Row(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                  icon: Icon(Icons.check_box_outlined),
-                                  onPressed: () {
-                                    print("Accept");
-                                  }),
-                              Text('Accept'),
-                            ],
+                        leading: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                    widget.chatRequests[index]['image']),
+                                fit: BoxFit.contain),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                  icon: Icon(Icons.close),
-                                  onPressed: () {
-                                    print("Decline");
-                                  }),
-                              Text('Decline'),
-                            ],
-                          ),
-                        ],
+                        ),
+                        subtitle: Text(
+                          "Slide request to respond",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16),
+                        ),
+                        title: Text(
+                          widget.chatRequests[index]['name'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 18),
+                        ),
+                        contentPadding: EdgeInsets.only(right: 25),
                       ),
-                      title: Text(
-                        chatRequests[index]['name'],
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 18),
-                      ),
-                      contentPadding: EdgeInsets.only(right: 25),
                     );
                   },
                 ),

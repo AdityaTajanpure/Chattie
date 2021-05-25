@@ -58,8 +58,9 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Text(
                 widget.chatID['name'],
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 26,
                     fontWeight: FontWeight.w300,
                     color: Colors.black),
               ),
@@ -90,14 +91,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         } else {
                           var data = snapshot.data.data()['chat'];
                           var msg = data[index]['msg'].split(':');
-                          if (msg[-1] == user.uid)
+                          if (msg.last == user.uid)
                             return MyMessage(
-                              data: msg[0],
+                              data: msg[0].replaceAll("%colon%", ":"),
                               time: data[index]['time'],
                             );
                           else
                             return YourMessage(
-                              data: msg[0],
+                              data: msg[0].replaceAll("%colon%", ":"),
                               time: data[index]['time'],
                             );
                         }
@@ -136,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 var time;
                                 var now = new DateTime.now();
                                 var date = new DateFormat("H:mm").format(now);
+                                msg = msg.replaceAll(":", "%colon%");
                                 msg = msg + ":" + user.uid;
                                 if (int.parse(date.split(':')[0]) >= 12) {
                                   time = date + " PM";

@@ -100,7 +100,10 @@ class FirstScreen extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 18),
                       ),
-                      subtitle: Text(chatsList[index]['last_msg'],
+                      subtitle: Text(
+                          chatsList[index]['last_msg'] == ""
+                              ? "Start your conversation.."
+                              : chatsList[index]['last_msg'],
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 16)),
                       onTap: () {

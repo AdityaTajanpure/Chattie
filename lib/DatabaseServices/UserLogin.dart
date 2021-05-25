@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class UserLogin {
   final String uid;
@@ -38,18 +39,40 @@ class UserLogin {
     return userReference.doc(uid).snapshots();
   }
 
-  acceptRequest(index, List request) {
-    Map<String, dynamic> data = request.removeAt(index);
-    return userReference.doc(uid).update({'request': request}).then((value) {
+  acceptRequest(index, request, uid2) {
+    var uuid = Uuid();
+    String chat_id = uuid.v4().replaceAll("-", "");
+    return userReference.doc(uid).update({
+      'request': FieldValue.arrayRemove([request]),
+    }).then((value) {
+      request['time'] = '';
+      request['last_msg'] = '';
+      request['chat_id'] = chat_id;
       userReference.doc(uid).update({
-        'chats_list': FieldValue.arrayUnion([data])
+        'chats_list': FieldValue.arrayUnion([
+          request,
+        ])
+      }).then((value) {
+        FirebaseFirestore.instance.collection('chats').doc(chat_id).set({
+          'chat': [],
+          'id1': uid,
+          'id2': request['uid'],
+        });
+      }).then((value) {
+        userReference.doc(uid2).update({
+          'chats_list': FieldValue.arrayUnion([
+            request,
+          ])
+        });
       });
     });
   }
 
-  sendRequest() {}
-
-  cancelRequest() {}
+  cancelRequest(index, request) {
+    return userReference.doc(uid).update({
+      'request': FieldValue.arrayRemove([request]),
+    });
+  }
 
   getChatData(chatId) {
     return FirebaseFirestore.instance
@@ -66,12 +89,30 @@ class UserLogin {
           'time': time,
           'seen': false,
         }
-      ])
+      ]),
     }).then((value) {
       chatList[index]['last_msg'] = data.split(":")[0];
       chatList[index]['time'] = time;
-      userReference.doc(id2).update({
+    }).then((value) {
+      userReference.doc(id1).update({
         'chats_list': chatList,
+      });
+    }).then((value) {
+      userReference.doc(id2).get().then((value) {
+        chatList = value.data()['chats_list'];
+      }).then((value) {
+        chatList.forEach(
+          (el) => {
+            if (el['chat_id'] == chatID)
+              {
+                el['last_msg'] = data.split(":")[0],
+                el['time'] = time,
+              },
+          },
+        );
+        userReference.doc(id2).update({
+          'chats_list': chatList,
+        });
       });
     });
   }
