@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class UserLogin {
@@ -39,7 +40,7 @@ class UserLogin {
     return userReference.doc(uid).snapshots();
   }
 
-  acceptRequest(index, request, uid2) {
+  acceptRequest(index, request, uid2, userData) {
     var uuid = Uuid();
     String chat_id = uuid.v4().replaceAll("-", "");
     return userReference.doc(uid).update({
@@ -59,6 +60,9 @@ class UserLogin {
           'id2': request['uid'],
         });
       }).then((value) {
+        request['name'] = userData.getName;
+        request['image'] = userData.getImageUrl;
+        request['uid'] = userData.getUid;
         userReference.doc(uid2).update({
           'chats_list': FieldValue.arrayUnion([
             request,
@@ -115,5 +119,34 @@ class UserLogin {
         });
       });
     });
+  }
+
+  deleteMsg(chatID, index, chat) {
+    chat.removeAt(index);
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'chat': chat,
+    });
+  }
+
+  sendRequest(userData, id, context) {
+    userReference
+        .doc(id)
+        .update({
+          'request': [
+            {
+              'name': userData.getName,
+              'image': userData.getImageUrl,
+              'uid': userData.getUid,
+            }
+          ]
+        })
+        .onError((error, stackTrace) => {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("User ID Not Found")))
+            })
+        .then((value) => {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("Friend Request Sent")))
+            });
   }
 }

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chattie/DataModels/UserData.dart';
 import 'package:chattie/DatabaseServices/UserLogin.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SecondScreen extends StatefulWidget {
   final chatRequests, uid;
@@ -28,7 +30,10 @@ class _SecondScreenState extends State<SecondScreen> {
               onPressed: () async {
                 if (action == "Accept")
                   await UserLogin(uid: widget.uid).acceptRequest(
-                      index, request, widget.chatRequests[index]['uid']);
+                      index,
+                      request,
+                      widget.chatRequests[index]['uid'],
+                      context.read<UserData>());
                 else
                   await UserLogin(uid: widget.uid)
                       .cancelRequest(index, request);

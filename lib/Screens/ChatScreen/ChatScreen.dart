@@ -6,6 +6,7 @@ import 'package:chattie/Screens/ChatScreen/Widget/YourMessage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,43 @@ class _ChatScreenState extends State<ChatScreen> {
         curve: Curves.easeOut,
       );
     });
+  }
+
+  Future<bool> _showConfirmationDialog(BuildContext context, index, msg, chat) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('What you want to do with this message?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Copy'),
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: msg));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Copied to clipboard'),
+                ));
+                Navigator.pop(context, true);
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () async {
+                UserLogin().deleteMsg(widget.chatID['chat_id'], index, chat);
+                Navigator.pop(context, true);
+              },
+            ),
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () async {
+                Navigator.pop(context, false);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -92,9 +130,27 @@ class _ChatScreenState extends State<ChatScreen> {
                           var data = snapshot.data.data()['chat'];
                           var msg = data[index]['msg'].split(':');
                           if (msg.last == user.uid)
-                            return MyMessage(
-                              data: msg[0].replaceAll("%colon%", ":"),
-                              time: data[index]['time'],
+                            return InkWell(
+                              onLongPress: () {
+                                _showConfirmationDialog(
+                                    context,
+                                    index,
+                                    msg[0].replaceAll("%colon%", ":"),
+                                    snapshot.data.data()['chat']);
+                              },
+                              child: InkWell(
+                                onLongPress: () {
+                                  _showConfirmationDialog(
+                                      context,
+                                      index,
+                                      msg[0].replaceAll("%colon%", ":"),
+                                      snapshot.data.data()['chat']);
+                                },
+                                child: MyMessage(
+                                  data: msg[0].replaceAll("%colon%", ":"),
+                                  time: data[index]['time'],
+                                ),
+                              ),
                             );
                           else
                             return YourMessage(

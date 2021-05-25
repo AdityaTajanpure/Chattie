@@ -1,9 +1,20 @@
+import 'package:barcode_scan_fix/barcode_scan.dart';
+import 'package:chattie/DataModels/UserData.dart';
+import 'package:chattie/DatabaseServices/UserLogin.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ThirdScreen extends StatelessWidget {
-  String userId;
+class ThirdScreen extends StatefulWidget {
+  @override
+  _ThirdScreenState createState() => _ThirdScreenState();
+}
+
+class _ThirdScreenState extends State<ThirdScreen> {
+  TextEditingController _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final userData = context.read<UserData>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -32,17 +43,16 @@ class ThirdScreen extends StatelessWidget {
                 height: 50,
               ),
               TextField(
+                controller: _textController,
                 style: Theme.of(context)
                     .textTheme
                     .headline1
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 18),
-                maxLength: 10,
+                maxLength: 28,
                 decoration: new InputDecoration(
                   labelText: "Enter User Tag",
                   border: OutlineInputBorder(),
                 ),
-
-                onChanged: (value) => this.userId = value,
                 // Only numbers can be entered
               ),
               SizedBox(
@@ -58,15 +68,48 @@ class ThirdScreen extends StatelessWidget {
                         color: Colors.amberAccent,
                         borderRadius: BorderRadius.circular(45),
                       ),
-                      child: Icon(
-                        Icons.add_a_photo,
-                        size: 30,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.add_a_photo,
+                          size: 30,
+                        ),
+                        onPressed: () async {
+                          String codeSanner =
+                              await BarcodeScanner.scan(); //barcode scnner
+                          setState(() {
+                            _textController.text = codeSanner;
+                          });
+                        },
                       ),
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    Text("Scan QR Code")
+                    Text("Scan QR Code"),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (_textController.text.length < 15) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Enter Correct User Tag")));
+                        } else {
+                          UserLogin().sendRequest(
+                              userData, _textController.text, context);
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.amberAccent),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          child: Text("Send Request"),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               )
