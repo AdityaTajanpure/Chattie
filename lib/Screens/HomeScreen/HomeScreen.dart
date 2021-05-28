@@ -6,7 +6,6 @@ import 'package:chattie/Screens/HomeScreen/Components/SecondScreen.dart';
 import 'package:chattie/Screens/HomeScreen/Components/ThirdScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'Components/FirstScreen.dart';
 

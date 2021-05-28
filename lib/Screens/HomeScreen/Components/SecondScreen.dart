@@ -118,6 +118,9 @@ class _SecondScreenState extends State<SecondScreen> {
                           case DismissDirection.up:
                           case DismissDirection.down:
                             assert(false);
+                            break;
+                          case DismissDirection.none:
+                            break;
                         }
                         return false;
                       },

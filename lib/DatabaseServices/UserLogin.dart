@@ -42,19 +42,19 @@ class UserLogin {
 
   acceptRequest(index, request, uid2, userData) {
     var uuid = Uuid();
-    String chat_id = uuid.v4().replaceAll("-", "");
+    String chatId = uuid.v4().replaceAll("-", "");
     return userReference.doc(uid).update({
       'request': FieldValue.arrayRemove([request]),
     }).then((value) {
       request['time'] = '';
       request['last_msg'] = '';
-      request['chat_id'] = chat_id;
+      request['chat_id'] = chatId;
       userReference.doc(uid).update({
         'chats_list': FieldValue.arrayUnion([
           request,
         ])
       }).then((value) {
-        FirebaseFirestore.instance.collection('chats').doc(chat_id).set({
+        FirebaseFirestore.instance.collection('chats').doc(chatId).set({
           'chat': [],
           'id1': uid,
           'id2': request['uid'],
