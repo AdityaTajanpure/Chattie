@@ -7,6 +7,13 @@ class FirstScreen extends StatelessWidget {
   final List chatsList;
   const FirstScreen({Key key, this.chatsList}) : super(key: key);
 
+  String trim(string) {
+    String returnString = '';
+    for (int i = 0; i < 15; i++) returnString += string[i];
+    returnString += '..';
+    return returnString;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +78,7 @@ class FirstScreen extends StatelessWidget {
                 context: context,
                 removeTop: true,
                 child: ListView.separated(
+                  reverse: true,
                   shrinkWrap: true,
                   itemCount: chatsList.length,
                   separatorBuilder: (context, index) => Divider(
@@ -89,7 +97,7 @@ class FirstScreen extends StatelessWidget {
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
                                   chatsList[index]['image']),
-                              fit: BoxFit.contain),
+                              fit: BoxFit.cover),
                         ),
                       ),
                       trailing: Text(chatsList[index]['time'],
@@ -103,7 +111,11 @@ class FirstScreen extends StatelessWidget {
                       subtitle: Text(
                           chatsList[index]['last_msg'] == ""
                               ? "Start your conversation.."
-                              : chatsList[index]['last_msg'],
+                              : chatsList[index]['last_msg'].length > 10
+                                  ? trim(chatsList[index]['last_msg']
+                                      .replaceAll("%colon%", ":"))
+                                  : chatsList[index]['last_msg']
+                                      .replaceAll("%colon%", ":"),
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 16)),
                       onTap: () {

@@ -31,6 +31,7 @@ class _LoginState extends State<Login> {
     print("+" + _selected.dialingCode + phoneNo);
     final PhoneCodeSent smsOTPSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
+      Navigator.pop(context);
       smsOTPDialog(context, userData).then((value) {
         print('signing in');
       });
@@ -226,7 +227,7 @@ class _LoginState extends State<Login> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(45),
                             image: DecorationImage(
-                                image: FileImage(_image), fit: BoxFit.contain),
+                                image: FileImage(_image), fit: BoxFit.fill),
                           ),
                         ),
                 ),
@@ -345,7 +346,12 @@ class _LoginState extends State<Login> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (this.name == null || this.phoneNo == null) {
+                    if (this.name != '' ||
+                        this.phoneNo != '' ||
+                        _image != null) {
+                      loading(context);
+                      verifyPhone(userData);
+                    } else {
                       Fluttertoast.showToast(
                           msg: 'Fill all Fields',
                           toastLength: Toast.LENGTH_LONG,
@@ -353,8 +359,6 @@ class _LoginState extends State<Login> {
                           backgroundColor: Colors.grey,
                           textColor: Colors.black);
                     }
-                    if (this.name != '' || this.phoneNo != '')
-                      verifyPhone(userData);
                   },
                   child: Container(
                     decoration: BoxDecoration(

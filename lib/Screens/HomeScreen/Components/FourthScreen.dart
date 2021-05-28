@@ -14,7 +14,7 @@ class _FourthScreenState extends State<FourthScreen> {
   bool darkMode = false;
   bool setOnline = false;
 
-  Future<bool> _showConfirmationDialog(BuildContext context, index, msg, chat) {
+  Future<bool> _showConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -25,7 +25,14 @@ class _FourthScreenState extends State<FourthScreen> {
             TextButton(
               child: const Text('Yes'),
               onPressed: () async {
-                confirmLogOut();
+                await context
+                    .read<AuthenticationService>()
+                    .signOut()
+                    .then((val) => {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "You are logged out, app will close in 2 seconds"))),
+                        });
                 Navigator.pop(context, true);
               },
             ),
@@ -39,15 +46,6 @@ class _FourthScreenState extends State<FourthScreen> {
         );
       },
     );
-  }
-
-  confirmLogOut() {
-    context.read<AuthenticationService>().signOut();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("You are logged out, app will close in 2 seconds")));
-    Future.delayed(Duration(seconds: 2), () {
-      SystemNavigator.pop();
-    });
   }
 
   @override
@@ -124,7 +122,9 @@ class _FourthScreenState extends State<FourthScreen> {
               ),
               Center(
                 child: InkWell(
-                  onTap: () async {},
+                  onTap: () async {
+                    _showConfirmationDialog(context);
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),

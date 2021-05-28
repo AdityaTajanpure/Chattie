@@ -114,6 +114,7 @@ class UserLogin {
               },
           },
         );
+        print(chatList);
         userReference.doc(id2).update({
           'chats_list': chatList,
         });

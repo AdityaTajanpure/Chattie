@@ -145,7 +145,7 @@ class _SecondScreenState extends State<SecondScreen> {
                             image: DecorationImage(
                                 image: CachedNetworkImageProvider(
                                     widget.chatRequests[index]['image']),
-                                fit: BoxFit.contain),
+                                fit: BoxFit.fill),
                           ),
                         ),
                         subtitle: Text(

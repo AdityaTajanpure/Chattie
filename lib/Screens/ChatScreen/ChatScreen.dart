@@ -87,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 image: DecorationImage(
                     image: CachedNetworkImageProvider(widget.chatID['image']),
-                    fit: BoxFit.contain),
+                    fit: BoxFit.cover),
               ),
             ),
           ),
@@ -138,24 +138,24 @@ class _ChatScreenState extends State<ChatScreen> {
                                     msg[0].replaceAll("%colon%", ":"),
                                     snapshot.data.data()['chat']);
                               },
-                              child: InkWell(
-                                onLongPress: () {
-                                  _showConfirmationDialog(
-                                      context,
-                                      index,
-                                      msg[0].replaceAll("%colon%", ":"),
-                                      snapshot.data.data()['chat']);
-                                },
-                                child: MyMessage(
-                                  data: msg[0].replaceAll("%colon%", ":"),
-                                  time: data[index]['time'],
-                                ),
+                              child: MyMessage(
+                                data: msg[0].replaceAll("%colon%", ":"),
+                                time: data[index]['time'],
                               ),
                             );
                           else
-                            return YourMessage(
-                              data: msg[0].replaceAll("%colon%", ":"),
-                              time: data[index]['time'],
+                            return InkWell(
+                              onLongPress: () {
+                                _showConfirmationDialog(
+                                    context,
+                                    index,
+                                    msg[0].replaceAll("%colon%", ":"),
+                                    snapshot.data.data()['chat']);
+                              },
+                              child: YourMessage(
+                                data: msg[0].replaceAll("%colon%", ":"),
+                                time: data[index]['time'],
+                              ),
                             );
                         }
                       },
@@ -205,8 +205,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                     widget.chatID['chat_id'],
                                     msg,
                                     time,
-                                    snapshot.data.data()['id1'],
-                                    snapshot.data.data()['id2'],
+                                    user.uid,
+                                    snapshot.data.data()['id2'] == user.uid
+                                        ? snapshot.data.data()['id1']
+                                        : snapshot.data.data()['id2'],
                                     userData.getList,
                                     widget.index);
                               },

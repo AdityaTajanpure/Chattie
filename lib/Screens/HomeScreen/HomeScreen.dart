@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:chattie/DataModels/UserData.dart';
 import 'package:chattie/DatabaseServices/UserLogin.dart';
 import 'package:chattie/Screens/HomeScreen/Components/FourthScreen.dart';
@@ -92,12 +93,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                       });
                                     }),
                                 IconButton(
-                                    icon: Icon(
-                                      Icons.notifications_outlined,
-                                      color: _selectedIndex == 1
-                                          ? Colors.black
-                                          : Colors.grey,
-                                    ),
+                                    icon: (userData.getRequest.length) > 0
+                                        ? Badge(
+                                            badgeContent: Text(
+                                              userData.getRequest.length
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ),
+                                            child: Icon(
+                                              Icons
+                                                  .notifications_active_outlined,
+                                              color: _selectedIndex == 1
+                                                  ? Colors.black
+                                                  : Colors.grey,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.notifications_outlined,
+                                            color: _selectedIndex == 1
+                                                ? Colors.black
+                                                : Colors.grey,
+                                          ),
                                     onPressed: () {
                                       setState(() {
                                         _selectedIndex = 1;
