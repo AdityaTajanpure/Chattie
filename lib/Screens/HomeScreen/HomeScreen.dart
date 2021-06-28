@@ -6,6 +6,7 @@ import 'package:chattie/Screens/HomeScreen/Components/SecondScreen.dart';
 import 'package:chattie/Screens/HomeScreen/Components/ThirdScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'Components/FirstScreen.dart';
 
@@ -25,6 +26,14 @@ class _HomeScreenState extends State<HomeScreen> {
     userData = context.read<UserData>();
     user = context.read<User>();
     super.initState();
+  }
+
+  updateSelectedIndex(index) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    });
   }
 
   @override
@@ -87,9 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           : Colors.grey,
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        _selectedIndex = 0;
-                                      });
+                                      updateSelectedIndex(0);
                                     }),
                                 IconButton(
                                     icon: (userData.getRequest.length) > 0
@@ -116,9 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 : Colors.grey,
                                           ),
                                     onPressed: () {
-                                      setState(() {
-                                        _selectedIndex = 1;
-                                      });
+                                      updateSelectedIndex(1);
                                     }),
                                 IconButton(
                                     icon: Icon(
@@ -128,9 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           : Colors.grey,
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        _selectedIndex = 2;
-                                      });
+                                      updateSelectedIndex(2);
                                     }),
                                 IconButton(
                                     icon: Icon(
@@ -140,9 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           : Colors.grey,
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        _selectedIndex = 3;
-                                      });
+                                      updateSelectedIndex(3);
                                     }),
                               ],
                             ),

@@ -32,7 +32,9 @@ class _FourthScreenState extends State<FourthScreen> {
                               content: Text(
                                   "You are logged out, app will close in 2 seconds"))),
                         });
-                Navigator.pop(context, true);
+                Future.delayed(Duration(seconds: 1), () {
+                  Navigator.pop(context, true);
+                });
               },
             ),
             TextButton(

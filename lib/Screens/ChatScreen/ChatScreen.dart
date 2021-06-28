@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattie/DataModels/UserData.dart';
 import 'package:chattie/DatabaseServices/UserLogin.dart';
@@ -23,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   int length = 0;
   ScrollController _scrollController = ScrollController();
   TextEditingController _textController = TextEditingController();
+  Codec<String, String> stringToBase64 = utf8.fuse(base64);
 
   scrollToEnd() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -139,7 +142,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                     snapshot.data.data()['chat']);
                               },
                               child: MyMessage(
-                                data: msg[0].replaceAll("%colon%", ":"),
+                                data: stringToBase64
+                                    .decode(msg[0])
+                                    .replaceAll("%colon%", ":"),
                                 time: data[index]['time'],
                               ),
                             );
@@ -153,7 +158,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                     snapshot.data.data()['chat']);
                               },
                               child: YourMessage(
-                                data: msg[0].replaceAll("%colon%", ":"),
+                                data: stringToBase64
+                                    .decode(msg[0])
+                                    .replaceAll("%colon%", ":"),
                                 time: data[index]['time'],
                               ),
                             );
@@ -194,6 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 var now = new DateTime.now();
                                 var date = new DateFormat("H:mm").format(now);
                                 msg = msg.replaceAll(":", "%colon%");
+                                msg = stringToBase64.encode(msg);
                                 msg = msg + ":" + user.uid;
                                 if (int.parse(date.split(':')[0]) >= 12) {
                                   time = date + " PM";

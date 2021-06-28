@@ -48,6 +48,21 @@ Has User data
     - Save data in provider class
 
 
+ - Start Presentation
+   You will start from Requirements
+   Tell why they are required and where its used
+   Explain DFD diagram level 0
+   Tell its advantages -
+        uses end2end encryption - explain how its done, its encrypted directly from user device and decrypted directly from another device
+        Tell them 'but we'll see that ahead'
+        Push Notifications - Push notifications are like heart for the chatting app, as you can say without them no user will know whats actually happening.
+        
+    Limitations - 
+        Like other chatting apps ( ofcourse ) the ones who uses databases and users way beyond bluetooth reach it needs an active internet connection
+        However the pending messages of any user are queued on their device until internet connection is available.
+
+        Can't share images and videos  - It's just because having a server costs money when you have images and videos to share,  and for demo purpose its fine.
+
 
 
 

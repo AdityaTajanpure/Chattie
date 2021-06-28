@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chattie/Screens/ChatScreen/ChatScreen.dart';
 import 'package:chattie/Services/Intent.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class FirstScreen extends StatelessWidget {
   final List chatsList;
+  static Codec<String, String> stringToBase64 = utf8.fuse(base64);
   const FirstScreen({Key key, this.chatsList}) : super(key: key);
 
   String trim(string) {

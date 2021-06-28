@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 
 class UserLogin {
   final String uid;
   UserLogin({this.uid});
+  Codec<String, String> stringToBase64 = utf8.fuse(base64);
 
   final userReference = FirebaseFirestore.instance.collection('users');
 
@@ -95,7 +97,8 @@ class UserLogin {
         }
       ]),
     }).then((value) {
-      chatList[index]['last_msg'] = data.split(":")[0];
+      chatList[index]['last_msg'] = stringToBase64.decode(data.split(":")[0]);
+      print(stringToBase64.decode(data.split(":")[0]));
       chatList[index]['time'] = time;
     }).then((value) {
       userReference.doc(id1).update({
@@ -109,7 +112,7 @@ class UserLogin {
           (el) => {
             if (el['chat_id'] == chatID)
               {
-                el['last_msg'] = data.split(":")[0],
+                el['last_msg'] = stringToBase64.decode(data.split(":")[0]),
                 el['time'] = time,
               },
           },
